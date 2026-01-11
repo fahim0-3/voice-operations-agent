@@ -1,0 +1,49 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.log
+
+# --- Node / web ---
+web/node_modules/
+web/dist/
+web/.vite/
+
+# --- Env / secrets ---
+.env
+.env.local
+*.local
+
+# --- Models / weights (never commit binary weights) ---
+*.bin
+*.gguf
+*.onnx
+*.pt
+*.pth
+models/
+**/voices/*.onnx
+**/voices/*.onnx.json
+
+# --- OS / IDE ---
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+
+# --- Benchmark artifacts (generated, not source) ---
+bench/results/*.json
+bench/results/*.csv
+
+# --- uv ---
+uv.lock.bak
+
+# --- Personal learning docs (not part of the public repo) ---
+docs/
+
+# --- Local operational data (generated; may contain transcripts) ---
+server/data/*.jsonl
+web/tsconfig.tsbuildinfo
