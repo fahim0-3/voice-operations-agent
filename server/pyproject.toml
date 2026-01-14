@@ -1,0 +1,77 @@
+[project]
+name = "voice-operations-agent-server"
+version = "0.1.0"
+description = "Real-time voice operations agent with streaming STT, policy-gated operational tools, streaming TTS, and barge-in cancellation."
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "websockets>=13.1",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "ollama>=0.4.4",
+    "numpy>=1.26,<2.0",
+    "python-dotenv>=1.0",
+    "structlog>=24.4",
+    "psutil>=6.1",
+    "gputil>=1.4.0",
+    "onnxruntime>=1.20",
+    "soundfile>=0.12.1",
+    "piper-tts>=1.2.0",
+    "httpx>=0.27",
+    "beautifulsoup4>=4.12",
+    "pycaw>=20240210; sys_platform == 'win32'",
+    "comtypes>=1.4; sys_platform == 'win32'",
+    # --- GPU stack: PyTorch (cu128 build, required for our Blackwell/sm_120
+    # GPU - see docs/15-gpu-cuda-and-vram.md) + faster-whisper (CTranslate2
+    # STT engine, verified working on sm_120 via the Phase-0 spike). Both
+    # are hard (non-optional) deps because vad.py and stt.py import them
+    # unconditionally.
+    "torch>=2.9",
+    "faster-whisper>=1.1.0",
+    "silero-vad>=6.2.1",
+    "boto3>=1.43.72",
+    "openai>=3.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "httpx>=0.27",
+    "ruff>=0.7",
+    "mypy>=1.13",
+]
+
+# This is an application, not a publishable library - tell uv not to try to
+# build/install it as a package (avoids needing a build backend at all).
+[tool.uv]
+package = false
+
+# why an explicit index instead of --extra-index-url on the CLI: `uv sync`
+# only re-resolves from pyproject.toml + the lockfile, it does NOT remember
+# flags from a previous ad-hoc `uv pip install` call. Declaring the index
+# here is what makes `torch==...+cu128` survive every future `uv sync`
+# instead of getting silently replaced by the CPU-only wheel from PyPI.
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
