@@ -1,0 +1,202 @@
+/* Minimal, dark operations-console aesthetic - deliberately simple CSS
+   (no framework) since the interesting engineering in this project is
+   the audio pipeline, not the styling. */
+
+:root {
+  --bg: #0b0e14;
+  --panel: #131722;
+  --accent: #4dd0e1;
+  --accent-warm: #ffb74d;
+  --text: #e6edf3;
+  --text-dim: #8b95a5;
+  --danger: #ef5350;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.app {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.app__header h1 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.app__subtitle {
+  color: var(--text-dim);
+  margin-top: 0.25rem;
+}
+
+.app__controls {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.app__mic-button {
+  font-size: 1.1rem;
+  padding: 0.9rem 2rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.app__mic-button:hover {
+  background: rgba(77, 208, 225, 0.1);
+}
+
+.app__mic-button--active {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.app__main {
+  display: grid;
+  gap: 1.5rem;
+}
+
+/* --- Status indicator --- */
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
+
+.status-indicator__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-dim);
+}
+
+.status-indicator--listening .status-indicator__dot {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+.status-indicator--speaking .status-indicator__dot {
+  background: var(--accent-warm);
+  box-shadow: 0 0 8px var(--accent-warm);
+  animation: pulse 1s infinite ease-in-out;
+}
+
+.status-indicator--disconnected .status-indicator__dot {
+  background: var(--danger);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* --- Transcript --- */
+
+.transcript {
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  min-height: 200px;
+  max-height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.transcript__empty {
+  color: var(--text-dim);
+  text-align: center;
+  margin: auto;
+}
+
+.transcript__entry {
+  display: flex;
+  gap: 0.5rem;
+  line-height: 1.4;
+}
+
+.transcript__role {
+  flex-shrink: 0;
+  font-weight: 600;
+  width: 4.5rem;
+}
+
+.transcript__entry--user .transcript__role {
+  color: var(--accent);
+}
+
+.transcript__entry--assistant .transcript__role {
+  color: var(--accent-warm);
+}
+
+/* --- Latency HUD --- */
+
+.latency-hud {
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  font-size: 0.85rem;
+}
+
+.latency-hud--empty {
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.latency-hud__header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.latency-hud__total {
+  color: var(--accent);
+}
+
+.latency-hud__row {
+  display: grid;
+  grid-template-columns: 8rem 1fr 4rem;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.latency-hud__label {
+  color: var(--text-dim);
+}
+
+.latency-hud__bar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.latency-hud__bar-fill {
+  height: 100%;
+  background: var(--accent);
+}
+
+.latency-hud__value {
+  text-align: right;
+  color: var(--text-dim);
+}
